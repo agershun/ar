@@ -1,0 +1,144 @@
+<html lang="en">
+  <head>
+    <title>Verge3D+AR.js</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            background-color: #bfd1e5;
+            margin: 0px;
+            overflow: hidden;
+        }
+    </style>
+  </head>
+  <body>
+    <div id="container"><br /><br /><br /><br /><br />Loading...</div>
+    <script src="v3d.js"></script>
+    <script src="ar.min.js"></script>
+    <script>THREEx.ArToolkitContext.baseURL = './'</script>
+
+    <script>
+    
+    var container, camera, scene, textureLoader, controls;
+    var arToolkitContext, arToolkitSource, markerControls;
+
+    initScene();
+    initAR();
+
+    function initScene() {    
+        container = document.getElementById('container');
+        camera = new v3d.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100);
+
+//        controls = new v3d.DeviceOrientationControls(camera);
+
+        scene = new v3d.Scene();
+
+        var geometry = new v3d.SphereBufferGeometry(500, 60, 40);
+        // invert the geometry on the x-axis so that all of the faces point inward
+        geometry.scale(- 1, 1, 1);
+
+        var material = new v3d.MeshBasicMaterial({
+          map: new v3d.TextureLoader().load('grid.png')
+        });
+
+        var mesh = new v3d.Mesh(geometry, material);
+        scene.add(mesh);
+
+        var helperGeometry = new v3d.BoxBufferGeometry(100, 100, 100, 4, 4, 4);
+        var helperMaterial = new v3d.MeshBasicMaterial({ color: 0xff00ff, wireframe: true });
+        var helper = new v3d.Mesh(helperGeometry, helperMaterial);
+        scene.add(helper);
+
+        //
+
+        renderer = new v3d.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        //
+
+        window.addEventListener('resize', onWindowResize, false);
+
+    }
+
+    function initAR() {
+        arToolkitSource = new THREEx.ArToolkitSource({
+            sourceType : 'webcam',
+        });
+
+        arToolkitSource.init(function onReady(){
+            onResize()
+        })
+        
+        // handle resize
+        window.addEventListener('resize', function(){
+            onResize()
+        })
+        function onResize(){
+            arToolkitSource.onResize()  
+            arToolkitSource.copySizeTo(renderer.domElement) 
+            if( arToolkitContext.arController !== null ){
+                arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)    
+            }   
+        }
+
+        arToolkitContext = new THREEx.ArToolkitContext({
+            cameraParametersUrl: THREEx.ArToolkitContext.baseURL + 'camera_para.dat',
+            detectionMode: 'mono',
+        });
+    // initialize it
+        arToolkitContext.init(function onCompleted(){
+        // copy projection matrix to camera
+            camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+        });
+
+
+    // init controls for camera
+        markerControls = new THREEx.ArMarkerControls(arToolkitContext, camera, {
+            type : 'pattern',
+            patternUrl : THREEx.ArToolkitContext.baseURL + 'patt.hiro',
+            // patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.kanji',
+            // as we controls the camera, set changeMatrixMode: 'cameraTransformMatrix'
+            changeMatrixMode: 'cameraTransformMatrix'
+        })
+        // as we do changeMatrixMode: 'cameraTransformMatrix', start with invisible scene
+        scene.visible = false
+
+
+    }
+
+      function animate() {
+
+        window.requestAnimationFrame(animate);
+
+//        controls.update();
+        renderer.render(scene, camera);
+
+// ???
+        if( arToolkitSource.ready === false )   return
+
+        arToolkitContext.update( arToolkitSource.domElement )
+        
+        camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+
+
+        // update scene.visible if the marker is seen
+        scene.visible = camera.visible
+
+
+      }
+
+      function onWindowResize() {
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+      }
+
+
+    </script>
+  </body>
+</html>
