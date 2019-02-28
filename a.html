@@ -147,34 +147,38 @@
 	
 	var geometry1	= new THREE.CubeGeometry(0.1,0.1,0.1);
 	var mesh1	= new THREE.Mesh( geometry1, material );
+	mesh1.position.x	= -0.5
 	mesh1.position.y	= 0
-	mesh1.position.x	= 0
+	mesh1.position.z	= -0.5
 	scene.add( mesh1 );
 
 	var geometry2	= new THREE.CubeGeometry(0.1,0.1,0.1);
 	var mesh2	= new THREE.Mesh( geometry2, material );
-	mesh2.position.y	= 0
-	mesh2.position.x	= 1
+	mesh1.position.x	= 0.5
+	mesh1.position.y	= 0
+	mesh1.position.z	= -0.5
 	scene.add( mesh2 );
 
 	var geometry3	= new THREE.CubeGeometry(0.1,0.1,0.1);
 	var mesh3	= new THREE.Mesh( geometry3, material );
-	mesh3.position.y	= 1
-	mesh3.position.x	= 0
+	mesh1.position.x	= 0.5
+	mesh1.position.y	= 0
+	mesh1.position.z	= 0.5
 	scene.add( mesh3 );
 
 	var geometry4	= new THREE.CubeGeometry(0.1,0.1,0.1);
 	var mesh4	= new THREE.Mesh( geometry4, material );
-	mesh4.position.y	= 1
-	mesh4.position.x	= 0
+	mesh1.position.x	= -0.5
+	mesh1.position.y	= 0
+	mesh1.position.z	= 0.5
 	scene.add( mesh4 );
 
 
 
 	
-	// onRenderFcts.push(function(delta){
-	// 	mesh1.rotation.x += -Math.PI*delta*0.2;
-	// });
+	onRenderFcts.push(function(delta){
+		mesh1.rotation.x += -Math.PI*delta*0.2;
+	});
 
 
 
