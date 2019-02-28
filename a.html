@@ -182,6 +182,13 @@
 	scene.add( mesh5 );
 
 
+	var mesh6	= new THREE.Mesh( new THREE.CubeGeometry(0.2,0.2,0.2), material );
+	mesh6.position.x	= 0
+	mesh6.position.y	= 0
+	mesh6.position.z	= -1
+	scene.add( mesh6 );
+
+
 	
 	onRenderFcts.push(function(delta){
 		mesh1.rotation.x += -Math.PI*delta*0.2;
