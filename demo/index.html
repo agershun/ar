@@ -55,9 +55,16 @@
         renderer.setSize(arToolkitSource.domElement.width, arToolkitSource.domElement.height);
 
         document.body.appendChild(renderer.domElement);
-        renderer.domElement.style.opacity = 0.8;  
+        renderer.domElement.style.opacity = 0.5;  
 
         camera = new v3d.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+        console.log(camera.projectionMatrix.elements);
+
+//        camera = new v3d.Camera();
+//        camera.updateProjectionMatrix = function(){};
+
+//        camera.position.z = -5;
 
     }
 
@@ -71,6 +78,7 @@
         arToolkitContext.init(function onCompleted(){
         // copy projection matrix to camera
                 camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+                camera.updateProjectionMatrix();
         });
 
     // init controls for camera
@@ -80,9 +88,15 @@
             // patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.kanji',
             // as we controls the camera, set changeMatrixMode: 'cameraTransformMatrix'
             changeMatrixMode: 'cameraTransformMatrix'
+//            changeMatrixMode: 'modelViewMatrix'
         });
         // as we do changeMatrixMode: 'cameraTransformMatrix', start with invisible scene
 //        scene.visible = false
+
+        markerControls.addEventListener('markerFound',function(e){
+            console.log('marker found!');
+        });
+
     }
 
 
@@ -136,7 +150,7 @@
         cube = new v3d.Mesh( geometry, material );
         cube.position.x = 0;
         cube.position.y = 0;
-        cube.position.z = -10;
+        cube.position.z = 0;
         scene.add( cube );
 
 
@@ -192,8 +206,8 @@
              if( arToolkitSource.ready) {
                 if(arToolkitContext) {
                     arToolkitContext.update( arToolkitSource.domElement );
-                    camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
-                    camera.updateProjectionMatrix();
+                   camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+                   camera.updateProjectionMatrix();
 //                    console.log(arToolkitContext.getProjectionMatrix());
                 }
             }
@@ -201,6 +215,8 @@
 //        cube.rotation.y += 0.01;
         // cube.rotation.y += 0.01;
         renderer.render(scene, camera);
+
+//        console.log(scene.visible);
 
 
         // update scene.visible if the marker is seen
@@ -214,10 +230,22 @@
             document.getElementById('found').style.backgroundColor = "red";
         }
 
+        if(arToolkitContext) {
+            m = camera.projectionMatrix.elements;
+            var s = 0;
+            for(var i=0;i<16;i++) {
+                if(m[i]) {
+                    s += m[i];
+                }
+            };
+            console.log(s);
+        }
+
+
       }
 
 
-
+        
     </script>
   </body>
 </html>
