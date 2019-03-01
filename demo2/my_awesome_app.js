@@ -247,11 +247,10 @@ function initAR(app) {
         }   
     }
 
-    setInterval(function(){
-        if( arToolkitSource.ready === false )   return
-console.log(232);
+    setInterval(function() {
+        if( arToolkitSource.ready === false ) return;
         arToolkitContext.update( arToolkitSource.domElement );
-    }, 100);
+    }, 10);
 
 
 
