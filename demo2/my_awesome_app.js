@@ -248,11 +248,20 @@ function initAR(app) {
         }   
     }
 
+    if(!window.requestAnimationFrame) {
+        window.requestAnimationFrame = function(f){
+            setTimeout(f,10);
+        }
+    }
+
+
     requestAnimationFrame(function animate() {
         requestAnimationFrame(animate);
         if( arToolkitSource.ready === false ) return;
         arToolkitContext.update( arToolkitSource.domElement );        
     });
+
+
 
 
 }
