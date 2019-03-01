@@ -120,6 +120,7 @@
 
         scene = new v3d.Scene();
 
+/*
         var geometry = new v3d.BoxGeometry( 0.5, 0.5, 0.5);
         var material = new v3d.MeshBasicMaterial( { color: 0x00ff00 } );
         cube = new v3d.Mesh( geometry, material );
@@ -127,17 +128,17 @@
         cube.position.y = 0.5;
         cube.position.z = -3;
         scene.add( cube );
+*/
 
-/*
 
         var geometry = new v3d.BoxGeometry( 1, 1, 1);
         var material = new v3d.MeshBasicMaterial( { color: 0x00ff00 } );
         cube = new v3d.Mesh( geometry, material );
         cube.position.x = 0;
         cube.position.y = 0;
-        cube.position.z = 0;
+        cube.position.z = -10;
         scene.add( cube );
-*/
+
 
 /*
         var material    = new v3d.MeshNormalMaterial(); 
@@ -204,10 +205,14 @@
 
         // update scene.visible if the marker is seen
 //        scene.visible = camera.visible
-        if(camera.visible)
+        if(camera.visible) {
             document.getElementById('found').innerHTML = "YES";
-        else 
+            document.getElementById('found').style.backgroundColor = "green";
+        }
+        else {
             document.getElementById('found').innerHTML = "NO";
+            document.getElementById('found').style.backgroundColor = "red";
+        }
 
       }
 
