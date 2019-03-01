@@ -9,6 +9,7 @@
             margin: 0px; 
             overflow: hidden;
         }
+
     </style>
   </head>
   <body>
@@ -24,7 +25,7 @@
     
     var container, camera, scene, textureLoader, controls, renderer;
     var arToolkitContext, arToolkitSource, markerControls;
-    var cube;
+    var cube, mesh1;
 
     initAll();
     initScene();
@@ -38,13 +39,13 @@
         });
 
         arToolkitSource = new THREEx.ArToolkitSource({
-            sourceType : 'webcam',
+//            sourceType : 'webcam',
 
            // sourceType : 'image',
            // sourceUrl : 'markers-page.jpg'
 
-           // sourceType : 'video',
-           // sourceUrl : 'magic-book.mp4'
+           sourceType : 'video',
+           sourceUrl : 'magic-book.mp4'
 
 
 //            sourceUrl : 'grid.png'
@@ -95,14 +96,20 @@
             patternUrl : THREEx.ArToolkitContext.baseURL + 'patt.hiro',
             // patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.kanji',
             // as we controls the camera, set changeMatrixMode: 'cameraTransformMatrix'
-            changeMatrixMode: 'cameraTransformMatrix'
-//            changeMatrixMode: 'modelViewMatrix'
+           changeMatrixMode: 'cameraTransformMatrix'
+            // changeMatrixMode: 'modelViewMatrix'
         });
         // as we do changeMatrixMode: 'cameraTransformMatrix', start with invisible scene
 //        scene.visible = false
 
         markerControls.addEventListener('markerFound',function(e){
-            console.log('marker found!');
+//            console.log('marker found!');
+            console.log(camera.rotation.x);
+            scene.background = new THREE.Color( 0xff0000 );
+            setTimeout(function(){
+                scene.background = new THREE.Color( 0x00ff00 );
+
+            },1000);
             // console.log(e.target.context.arController.camera_mat);
             // console.log(e.target.context.arController.transform_mat);
 //            console.log(arToolkitContext._artoolkitProjectionAxisTransformMatrix.elements);
@@ -173,7 +180,7 @@
     var material    = new THREE.MeshNormalMaterial(); 
     
     var geometry1   = new THREE.CubeGeometry(0.1,0.1,0.1);
-    var mesh1   = new THREE.Mesh( geometry1, material );
+    mesh1   = new THREE.Mesh( geometry1, material );
     mesh1.position.x    = 0
     mesh1.position.y    = 0
     mesh1.position.z    = 0
@@ -214,6 +221,14 @@
     mesh6.position.y    = 0
     mesh6.position.z    = 0
     scene.add( mesh6 );
+
+    for(var i=0;i<20;i++) {
+        var cube   = new THREE.Mesh( new THREE.CubeGeometry(0.2,0.2,0.2), material );
+        cube.position.x    = i*0.1;
+        cube.position.y    = 0;
+        cube.position.z    = 0;
+        scene.add( mesh6 );
+    }
 
 
 
