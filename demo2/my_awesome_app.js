@@ -255,11 +255,11 @@ function initAR(app) {
     // }
 
 
-    requestAnimationFrame(function animate() {
-        requestAnimationFrame(animate);
-        if( arToolkitSource.ready === false ) return;
-        arToolkitContext.update( arToolkitSource.domElement );        
-    });
+    // requestAnimationFrame(function animate() {
+    //     requestAnimationFrame(animate);
+    //     if( arToolkitSource.ready === false ) return;
+    //     arToolkitContext.update( arToolkitSource.domElement );        
+    // });
 
     setInterval(function(){
         if( arToolkitSource.ready === false ) return;
