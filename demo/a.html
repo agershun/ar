@@ -14,11 +14,14 @@
   <body>
 <!--    <div id="container"><br /><br /><br /><br /><br />Loading...</div> -->
     <div id="found" style="position: absolute;z-index: +3; margin-top: 0px; margin-left: 0px; width: 100px; height: 50px; background-color: white; color:black; text-align: center; ">NO</div>
-    <script src="v3d.js"></script>
+<!--    <script src="v3d.js"></script> -->
+    <script src="three.min.js"></script>
     <script src="ar.min.js"></script>
     <script>THREEx.ArToolkitContext.baseURL = './'</script>
 
     <script>
+        v3d = THREE;
+
 
     var debug = true;
     
@@ -39,14 +42,8 @@
 
         arToolkitSource = new THREEx.ArToolkitSource({
             sourceType : 'webcam',
-
            // sourceType : 'image',
            // sourceUrl : 'markers-page.jpg'
-
-           // sourceType : 'video',
-           // sourceUrl : 'magic-book.mp4'
-
-
 //            sourceUrl : 'grid.png'
         });
 
@@ -128,12 +125,8 @@
 //            camera.aspect = window.innerWidth / window.innerHeight;
 //            camera.aspect = renderer.domElement.width / renderer.domElement.height;
             camera.aspect = arToolkitSource.domElement.width / arToolkitSource.domElement.height;
-
-            camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
-
             camera.updateProjectionMatrix();
 //            console.log(camera.aspect);
-
         }
     }
 
