@@ -199,7 +199,7 @@ function initAR(app) {
     });
 
     arToolkitSource.init(function onReady(){
-        onResize()
+        onResize();
     })
 
     window.addEventListener('resize', function(){
@@ -230,31 +230,29 @@ function initAR(app) {
                 });
 
                 markerControls.addEventListener('markerFound',function(e){
-                    console.log('marker found!');
+//                    console.log('marker found!');
                 });
+
             }
-        },1000);
+        },600);
 
     });
 
 
 
     function onResize(){
-        arToolkitSource.onResize()  
+        arToolkitSource.onResize(); 
 //        arToolkitSource.copySizeTo(app.renderer.domElement) 
-        if( arToolkitContext.arController !== null ){
-            arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)    
+        if(arToolkitContext.arController !== null ){
+            arToolkitSource.copySizeTo(arToolkitContext.arController.canvas);    
         }   
     }
 
     requestAnimationFrame(function animate() {
+        requestAnimationFrame(animate);
         if( arToolkitSource.ready === false ) return;
         arToolkitContext.update( arToolkitSource.domElement );        
     });
-
-    animate();
-
-
 
 
 }
