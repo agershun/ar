@@ -247,10 +247,12 @@ function initAR(app) {
         }   
     }
 
-    setInterval(function() {
+    requestAnimationFrame(function animate() {
         if( arToolkitSource.ready === false ) return;
-        arToolkitContext.update( arToolkitSource.domElement );
-    }, 10);
+        arToolkitContext.update( arToolkitSource.domElement );        
+    });
+
+    animate();
 
 
 
