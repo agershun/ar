@@ -13,6 +13,7 @@
   </head>
   <body>
 <!--    <div id="container"><br /><br /><br /><br /><br />Loading...</div> -->
+    <div id="found" style="position: absolute;z-index: +3; margin-top: 0px; margin-left: 0px; width: 100px; height: 50px; background-color: white; color:black; text-align: center; ">NO</div>
     <script src="v3d.js"></script>
     <script src="ar.min.js"></script>
     <script>THREEx.ArToolkitContext.baseURL = './'</script>
@@ -203,8 +204,10 @@
 
         // update scene.visible if the marker is seen
 //        scene.visible = camera.visible
-
-        console.log(camera.visible);
+        if(camera.visible)
+            document.getElementById('found').innerHTML = "YES";
+        else 
+            document.getElementById('found').innerHTML = "NO";
 
       }
 
