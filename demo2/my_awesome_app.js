@@ -248,11 +248,11 @@ function initAR(app) {
         }   
     }
 
-    if(!window.requestAnimationFrame) {
-        window.requestAnimationFrame = function(f){
-            setTimeout(f,10);
-        }
-    }
+    // if(!window.requestAnimationFrame) {
+    //     window.requestAnimationFrame = function(f){
+    //         setTimeout(f,10);
+    //     }
+    // }
 
 
     requestAnimationFrame(function animate() {
@@ -261,7 +261,10 @@ function initAR(app) {
         arToolkitContext.update( arToolkitSource.domElement );        
     });
 
-
+    setInterval(function(){
+        if( arToolkitSource.ready === false ) return;
+        arToolkitContext.update( arToolkitSource.domElement );        
+    },100);
 
 
 }
