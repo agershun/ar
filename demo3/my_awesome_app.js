@@ -177,20 +177,16 @@ function prepareExternalInterface(app) {
     //     console.log('Hello, World!');
     // }
 
-    app.ExternalInterface.startAR = function() {
-        initAR(app);
+    app.ExternalInterface.initAR = function() {
+        //console.log('Init AR');
     }
-
-    app.ExternalInterface.stopAR = function() {
-        stopAR(app);
-    }
-
 
 
 }
 
 function runCode(app) {
     // add your code here, e.g. console.log('Hello, World!');
+    initAR(app);
 
 }
 
@@ -200,6 +196,9 @@ function initAR(app) {
 
     var arToolkitSource = new THREEx.ArToolkitSource({
         sourceType : 'webcam',
+//        sourceType : 'image',
+//        sourceUrl: '1001.png'
+
     });
 
     arToolkitSource.init(function onReady(){
@@ -211,6 +210,7 @@ function initAR(app) {
     });
 
     var arToolkitContext = new THREEx.ArToolkitContext({
+        trackingBackend:'aruco',
         cameraParametersUrl: THREEx.ArToolkitContext.baseURL + 'camera_para.dat',
         detectionMode: 'mono',
     });
@@ -224,8 +224,11 @@ function initAR(app) {
                // app.camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
 
                 markerControls = new THREEx.ArMarkerControls(arToolkitContext, app.camera, {
-                    type : 'pattern',
-                    patternUrl : THREEx.ArToolkitContext.baseURL + 'patt.hiro',
+                    type : 'barcode',
+                    barcodeValue: 1001,
+                    // type : 'pattern',
+                    // patternUrl : THREEx.ArToolkitContext.baseURL + 'patt.hiro',
+
                     // patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.kanji',
                     // as we controls the camera, set changeMatrixMode: 'cameraTransformMatrix'
                    changeMatrixMode: 'cameraTransformMatrix'
@@ -237,25 +240,28 @@ function initAR(app) {
                 });
                 status = true;
             }
-        },600);
+        },100);
 
     });
 
 
     function onResize(){
         arToolkitSource.onResize(); 
-//        arToolkitSource.copySizeTo(app.renderer.domElement) 
+//        arToolkitSource.copySizeFrom(app.renderer.domElement) 
         if(arToolkitContext.arController !== null ){
             arToolkitSource.copySizeTo(arToolkitContext.arController.canvas);    
         }   
     }
+
+
 console.log(app);
-debugger;
     var oldRender = app.renderer.render;
 
     app.renderer.render = function (scene, camera) {
-        if(arToolkitSource.ready) {
-            arToolkitContext.update( arToolkitSource.domElement );        
+        if(arToolkitContext && arToolkitSource) {
+             if(arToolkitSource.ready) {
+                arToolkitContext.update( arToolkitSource.domElement );        
+            }
         }
 
 //console.log(this);
@@ -278,9 +284,6 @@ debugger;
 
 }
 
-function stopAR(app) {
-
-}
 
 
 });
