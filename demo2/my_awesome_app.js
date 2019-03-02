@@ -182,7 +182,7 @@ function prepareExternalInterface(app) {
 function runCode(app) {
     // add your code here, e.g. console.log('Hello, World!');
 
-    var arToolkitSource, arToolkitContext, markerControls, scene, camera;
+    var arToolkitSource, arToolkitContext, markerControls, status;
 
 
     var arToolkitSource = new THREEx.ArToolkitSource({
@@ -222,7 +222,7 @@ function runCode(app) {
                 markerControls.addEventListener('markerFound',function(e){
 //                    console.log('marker found!');
                 });
-
+                status = true;
             }
         },600);
 
@@ -237,11 +237,29 @@ function runCode(app) {
         }   
     }
 
+    var oldRender = app.renderer.render;
+
+    app.renderer.render = function (scene, camera) {
+        if(arToolkitSource.ready) {
+            arToolkitContext.update( arToolkitSource.domElement );        
+        }
+
+//console.log(this);
+//console.log(arguments);
+        if(camera.visible && status) {
+            oldRender.apply(this,arguments);
+        } else {
+            app.renderer.clear();
+        }
+
+//debugger;
+    }
+
     // Instead requestAnimationFrame
-    setInterval(function(){
-        if( arToolkitSource.ready === false ) return;
-        arToolkitContext.update( arToolkitSource.domElement );        
-    },30);
+    // setInterval(function(){
+    //     if( arToolkitSource.ready === false ) return;
+    //     arToolkitContext.update( arToolkitSource.domElement );        
+    // },30);
 
 
 }
