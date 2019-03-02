@@ -210,7 +210,7 @@ function initAR(app) {
     });
 
     var arToolkitContext = new THREEx.ArToolkitContext({
-        trackingBackend:'aruco',
+//        trackingBackend:'aruco',
         cameraParametersUrl: THREEx.ArToolkitContext.baseURL + 'camera_para.dat',
         detectionMode: 'mono',
     });
@@ -224,10 +224,10 @@ function initAR(app) {
                // app.camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
 
                 markerControls = new THREEx.ArMarkerControls(arToolkitContext, app.camera, {
-                   type : 'barcode',
-                   barcodeValue: 1001,
-                    // type : 'pattern',
-                    // patternUrl : THREEx.ArToolkitContext.baseURL + 'aruco1001.patt',
+  //                 type : 'barcode',
+  //                 barcodeValue: 1001,
+                    type : 'pattern',
+                    patternUrl : THREEx.ArToolkitContext.baseURL + 'aruco1001.patt',
 
                     // patternUrl : THREEx.ArToolkitContext.baseURL + 'patt.hiro',
 
