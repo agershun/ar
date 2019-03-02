@@ -212,8 +212,8 @@ function initAR(app) {
     var arToolkitContext = new THREEx.ArToolkitContext({
 //        trackingBackend:'aruco',
         cameraParametersUrl: THREEx.ArToolkitContext.baseURL + 'camera_para.dat',
-        detectionMode: 'mono',
-        
+        detectionMode: 'mono_and_matrix',
+        matrixCodeType: '3x3'
     });
     // initialize it
     arToolkitContext.init(function onCompleted(){
@@ -227,8 +227,12 @@ function initAR(app) {
                 markerControls = new THREEx.ArMarkerControls(arToolkitContext, app.camera, {
   //                 type : 'barcode',
   //                 barcodeValue: 1001,
-                    type : 'pattern',
-                    patternUrl : THREEx.ArToolkitContext.baseURL + 'aruco1001.patt',
+                    // type : 'pattern',
+                    // patternUrl : THREEx.ArToolkitContext.baseURL + 'aruco1001.patt',
+
+                    size: 1,
+                    type: 'unknown',
+
 
                     // patternUrl : THREEx.ArToolkitContext.baseURL + 'patt.hiro',
 

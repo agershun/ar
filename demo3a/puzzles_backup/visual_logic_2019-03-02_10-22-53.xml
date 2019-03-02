@@ -1,0 +1,58 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <tab name="Init" type="InitTab" active="false" scrollx="289.5" scrolly="347" scale="0.9"></tab>
+  <tab name="Main" type="MainTab" active="true" scrollx="265.00458795846464" scrolly="387.14979165751373" scale="0.9893235659366285">
+    <block type="whenClicked" id="^yI3{u=DSiwrNLBXPbzI" x="-210" y="-310">
+      <mutation enableifmissed="false"></mutation>
+      <value name="VALUE">
+        <block type="objectList" id="21^eIB-0*z1tJ}2K5RLu">
+          <field name="FIELDNAME">Cube</field>
+        </block>
+      </value>
+      <statement name="DO">
+        <block type="hide" id="eG,LpZ82(EY$UhZKNh?b">
+          <value name="VALUE">
+            <block type="objectList" id="Agdk4e~*n5oUT:N^FqxX">
+              <field name="FIELDNAME">Cube</field>
+            </block>
+          </value>
+        </block>
+      </statement>
+    </block>
+    <block type="whenHovered" id="k2Q)=9`]Ku|LdQp9Unhy" x="-210" y="-70">
+      <value name="VALUE">
+        <block type="objectList" id="zo|vK-#I6{8%Jv7)wn;n">
+          <field name="FIELDNAME">Cube</field>
+        </block>
+      </value>
+      <statement name="DO_OVER">
+        <block type="setHTMLElemStyle" id="sMa356}?b9zurf_??`*L">
+          <field name="PROPERTY">cursor</field>
+          <field name="PARENT">FALSE</field>
+          <value name="VALUE">
+            <block type="text" id="M3QzNaJBl)Q~!=!_5.1x">
+              <field name="TEXT">pointer</field>
+            </block>
+          </value>
+          <value name="ID">
+            <block type="HTMLBody" id="j+z?}jXk_+JzD@TC5(qp"></block>
+          </value>
+        </block>
+      </statement>
+      <statement name="DO_OUT">
+        <block type="setHTMLElemStyle" id="-?YfV1r02DBEw/mX(t1{">
+          <field name="PROPERTY">cursor</field>
+          <field name="PARENT">FALSE</field>
+          <value name="VALUE">
+            <block type="text" id="0#4(]K37L|Fl+EttkYF[">
+              <field name="TEXT">default</field>
+            </block>
+          </value>
+          <value name="ID">
+            <block type="HTMLBody" id="01@wIQ(Dgbk7la@.;0jg"></block>
+          </value>
+        </block>
+      </statement>
+    </block>
+  </tab>
+  <editorsettings width="700" height="694"></editorsettings>
+</xml>
