@@ -194,8 +194,8 @@ function runCode(app) {
     })
 
     window.addEventListener('resize', function(){
-        onResize()
-    })
+        onResize();
+    });
 
     var arToolkitContext = new THREEx.ArToolkitContext({
         cameraParametersUrl: THREEx.ArToolkitContext.baseURL + 'camera_para.dat',
@@ -208,7 +208,7 @@ function runCode(app) {
 
             // copy projection matrix to camera
             if(app.camera) {
-                app.camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+               // app.camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
 
                 markerControls = new THREEx.ArMarkerControls(arToolkitContext, app.camera, {
                     type : 'pattern',
@@ -229,7 +229,6 @@ function runCode(app) {
     });
 
 
-
     function onResize(){
         arToolkitSource.onResize(); 
 //        arToolkitSource.copySizeTo(app.renderer.domElement) 
@@ -238,19 +237,7 @@ function runCode(app) {
         }   
     }
 
-    // if(!window.requestAnimationFrame) {
-    //     window.requestAnimationFrame = function(f){
-    //         setTimeout(f,10);
-    //     }
-    // }
-
-
-    // requestAnimationFrame(function animate() {
-    //     requestAnimationFrame(animate);
-    //     if( arToolkitSource.ready === false ) return;
-    //     arToolkitContext.update( arToolkitSource.domElement );        
-    // });
-
+    // Instead requestAnimationFrame
     setInterval(function(){
         if( arToolkitSource.ready === false ) return;
         arToolkitContext.update( arToolkitSource.domElement );        
