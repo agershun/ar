@@ -232,6 +232,7 @@ function initAR(app) {
 
                     size: 1,
                     type: 'unknown',
+                    minConfidence: 1,
 
 
                     // patternUrl : THREEx.ArToolkitContext.baseURL + 'patt.hiro',
@@ -244,6 +245,7 @@ function initAR(app) {
 
                 markerControls.addEventListener('markerFound',function(e){
 //                    console.log('marker found!');
+                        console.log(e.target);
                 });
                 status = true;
             }

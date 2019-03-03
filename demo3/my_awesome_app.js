@@ -186,12 +186,16 @@ function prepareExternalInterface(app) {
 
 function runCode(app) {
     // add your code here, e.g. console.log('Hello, World!');
+    initPOS();
     initAR(app);
 
 }
 
 function initAR(app) { 
     var arToolkitSource, arToolkitContext, markerControls, status;
+    var trials = 0;
+    var cvnew, cvold;
+    var o, o1;
 
 
     var arToolkitSource = new THREEx.ArToolkitSource({
@@ -210,7 +214,7 @@ function initAR(app) {
     });
 
     var arToolkitContext = new THREEx.ArToolkitContext({
-//        trackingBackend:'aruco',
+        trackingBackend:'aruco',
         cameraParametersUrl: THREEx.ArToolkitContext.baseURL + 'camera_para.dat',
         detectionMode: 'mono',
         
@@ -225,10 +229,10 @@ function initAR(app) {
                // app.camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
 
                 markerControls = new THREEx.ArMarkerControls(arToolkitContext, app.camera, {
-  //                 type : 'barcode',
-  //                 barcodeValue: 1001,
-                    type : 'pattern',
-                    patternUrl : THREEx.ArToolkitContext.baseURL + 'aruco1001.patt',
+                   type : 'barcode',
+                   barcodeValue: 1001,
+//                    type : 'pattern',
+//                    patternUrl : THREEx.ArToolkitContext.baseURL + 'aruco1001.patt',
 
                     // patternUrl : THREEx.ArToolkitContext.baseURL + 'patt.hiro',
 
@@ -257,7 +261,7 @@ function initAR(app) {
     }
 
 
-console.log(app);
+//console.log(app);
     var oldRender = app.renderer.render;
 
     app.renderer.render = function (scene, camera) {
@@ -269,10 +273,73 @@ console.log(app);
 
 //console.log(this);
 //console.log(arguments);
-        if(camera.visible && status) {
-            oldRender.apply(this,arguments);
-        } else {
-            app.renderer.clear();
+        if(status && arToolkitContext && arToolkitSource &&  arToolkitSource.ready) {
+            if(camera.visible) {
+
+                var smooth = false;
+
+                if(smooth) {
+                    var p = camera.position;
+                    var r = camera.rotation;
+                    if(o && o1) {
+                        // if(Math.abs(p.x - o.x) > 0.01) p.x = (p.x+o.x*2)/3;
+                        // if(Math.abs(p.y - o.y) > 0.01) p.y = (p.y+o.y*2)/3;
+                        // if(Math.abs(p.z - o.z) > 0.01) p.z = (p.z+o.z*2)/3;
+
+                        // if(Math.abs(r._x - o._x) > 0.01) r._x = (r._x+o._x*2)/3;
+                        // if(Math.abs(r._y - o._y) > 0.01) r._y = (r._y+o._y*2)/3;
+                        // if(Math.abs(r._z - o._z) > 0.01) r._z = (r._z+o._z*2)/3;
+
+
+                        console.log(p.x,o.px, o1.px);
+
+
+                        var px = (p.x+o.px*2+o1.px*33)/36;
+                        var py = (p.y+o.py*2+o1.py*33)/36;
+                        var pz = (p.z+o.pz*2+o1.pz*33)/36;
+
+                        camera.position.set(px,py,pz);
+
+                        var rx = (r.x+o.rx*2+o1.rx*33)/36;
+                        var ry = (r.y+o.ry*2+o1.ry*33)/36;
+                        var rz = (r.z+o.rz*2+o1.rz*33)/36;
+
+                        camera.rotation.set(rx,ry,rz);
+
+                        console.log('=',px);
+
+
+                    }
+                    if(o) {
+                        o1 = o;
+                    }
+    //                o = {px:p.x, py:p.y, pz:p.z, rx:r.x, ry:r.y, rz:r.z };
+                    o = {px:p.x, py:p.y, pz:p.z, rx:r.x, ry:r.y, rz:r.z };
+                }
+
+//                camera.position.set(1,1,1);
+
+
+                // camera.position.x = 10;
+                // camera.position.y = 10;
+                // camera.position.z = 10;
+
+//                camera.updateProjectionMatrix();
+//
+//                console.log(camera.position.x);
+
+                oldRender.apply(this,arguments);
+                trials = 50;
+//                cvold = app.camera.projectionMatrix;
+            } else {
+                window.POS.smooth();
+                if(trials>0) {
+                    oldRender.apply(this,arguments);
+                    trials--;
+                } else {
+                    app.renderer.clear();
+                }
+            }
         }
 
 //debugger;
@@ -287,6 +354,47 @@ console.log(app);
 
 }
 
+function initPOS() {
+    var oldPose = window.POS.Posit.prototype.pose;
+
+
+    window.POS.Posit.prototype.pose = function() {
+        var ret = oldPose.apply(this,arguments);
+        var o = {
+            t:ret.bestTranslation,
+            r:ret.bestRotation
+        };
+        window.POS.smooth(o);
+
+        return ret;
+    }
+
+}
+
+var o1,o2, o3, o4;
+
+window.POS.smooth = function(o) {
+            if(!o && o1) o = o1;
+
+            if(o1 && o2 && o3 && o4) {
+                for(var i=0;i<3;i++) {
+                    o.t[i] = (o.t[i] + o1.t[i] + o2.t[i] + o3.t[i] + o4.t[i]) / 5;
+                    for(var j=0;j<3;j++) {
+                        o.r[i][j] = (o.r[i][j] + o1.r[i][j] + o2.r[i][j] + o3.r[i][j] + o4.r[i][j]) / 5;
+                    }
+                }
+            }
+            if(o3) {
+                o4 = o3;
+            }
+            if(o2) {
+                o3 = o2;
+            }
+            if(o1) {
+                o2 = o1;
+            }
+            o1 = o;
+}
 
 
 });
