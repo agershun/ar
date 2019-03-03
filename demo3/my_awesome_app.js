@@ -379,18 +379,38 @@ window.POS.smooth = function(o) {
                 if(o1) {
                     if(o2) {
                         o = {t:[],r:[[],[],[]]}
-                        for(var i=0;i<3;i++) {
-                            o.t[i] = 2*o1.t[i] - o2.t[i];
-                            for(var j=0;j<3;j++) {
-                                o.r[i][j] = 2*o1.r[i][j]-o2.r[i][j];
+                        if(o3) {
+//                            console.log('prediction 3');
+                            for(var i=0;i<3;i++) {
+                                o.t[i] = o1.t[i] + o2.t[i] - o3.t[i];
+                                for(var j=0;j<3;j++) {
+                                    o.r[i][j] = o1.r[i][j]+ o2.r[i][j]-o3.r[i][j];
+                                }
                             }
-                        }                        
+
+// 1,2,3,4,5
+// 8-3 = 4
+// 4+(3-2)
+// 12-6-2                        
+                        } else {
+//                            console.log('prediction 2');
+                            for(var i=0;i<3;i++) {
+                                o.t[i] = 2*o1.t[i] - o2.t[i];
+                                for(var j=0;j<3;j++) {
+                                    o.r[i][j] = 2*o1.r[i][j]-o2.r[i][j];
+                                }
+                            }
+                        }
+
                     } else {
+//                            console.log('prediction 1');
                         o = o1;
                     }
                 }
+
             } else {
                 // Smoothing
+//                console.log('smoothing');
                 if(o1 && o2 && o3 && o4) {
                     for(var i=0;i<3;i++) {
                         o.t[i] = (o.t[i] + o1.t[i] + o2.t[i] + o3.t[i] + o4.t[i]) / 5;
