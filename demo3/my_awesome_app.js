@@ -260,8 +260,6 @@ function initAR(app) {
         }   
     }
 
-
-//console.log(app);
     var oldRender = app.renderer.render;
 
     app.renderer.render = function (scene, camera) {
@@ -271,66 +269,10 @@ function initAR(app) {
             }
         }
 
-//console.log(this);
-//console.log(arguments);
         if(status && arToolkitContext && arToolkitSource &&  arToolkitSource.ready) {
             if(camera.visible) {
-
-                var smooth = false;
-
-                if(smooth) {
-                    var p = camera.position;
-                    var r = camera.rotation;
-                    if(o && o1) {
-                        // if(Math.abs(p.x - o.x) > 0.01) p.x = (p.x+o.x*2)/3;
-                        // if(Math.abs(p.y - o.y) > 0.01) p.y = (p.y+o.y*2)/3;
-                        // if(Math.abs(p.z - o.z) > 0.01) p.z = (p.z+o.z*2)/3;
-
-                        // if(Math.abs(r._x - o._x) > 0.01) r._x = (r._x+o._x*2)/3;
-                        // if(Math.abs(r._y - o._y) > 0.01) r._y = (r._y+o._y*2)/3;
-                        // if(Math.abs(r._z - o._z) > 0.01) r._z = (r._z+o._z*2)/3;
-
-
-                        console.log(p.x,o.px, o1.px);
-
-
-                        var px = (p.x+o.px*2+o1.px*33)/36;
-                        var py = (p.y+o.py*2+o1.py*33)/36;
-                        var pz = (p.z+o.pz*2+o1.pz*33)/36;
-
-                        camera.position.set(px,py,pz);
-
-                        var rx = (r.x+o.rx*2+o1.rx*33)/36;
-                        var ry = (r.y+o.ry*2+o1.ry*33)/36;
-                        var rz = (r.z+o.rz*2+o1.rz*33)/36;
-
-                        camera.rotation.set(rx,ry,rz);
-
-                        console.log('=',px);
-
-
-                    }
-                    if(o) {
-                        o1 = o;
-                    }
-    //                o = {px:p.x, py:p.y, pz:p.z, rx:r.x, ry:r.y, rz:r.z };
-                    o = {px:p.x, py:p.y, pz:p.z, rx:r.x, ry:r.y, rz:r.z };
-                }
-
-//                camera.position.set(1,1,1);
-
-
-                // camera.position.x = 10;
-                // camera.position.y = 10;
-                // camera.position.z = 10;
-
-//                camera.updateProjectionMatrix();
-//
-//                console.log(camera.position.x);
-
                 oldRender.apply(this,arguments);
                 trials = 40;
-//                cvold = app.camera.projectionMatrix;
             } else {
                 window.POS.smooth();
                 if(trials>0) {
@@ -341,8 +283,6 @@ function initAR(app) {
                 }
             }
         }
-
-//debugger;
     }
 
     // Instead requestAnimationFrame
@@ -384,7 +324,7 @@ window.POS.smooth = function(o) {
                             for(var i=0;i<3;i++) {
                                 var a2 = (o2.t[i]-o3.t[i]);
                                 var a1 = (o1.t[i]-o2.t[i]);
-                                if(a2 > 0.1) {
+                                if(a2 > 0.1 ) {
                                     a1 = a1*a1/a2;
                                 }
                                 o.t[i] = o1.t[i] + a1;
@@ -446,9 +386,9 @@ window.POS.smooth = function(o) {
                 }
             }
 
-            if(o3) {
-                o4 = o3;
-            }
+            // if(o3) {
+            //     o4 = o3;
+            // }
             if(o2) {
                 o3 = o2;
             }
