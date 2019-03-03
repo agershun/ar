@@ -329,7 +329,7 @@ function initAR(app) {
 //                console.log(camera.position.x);
 
                 oldRender.apply(this,arguments);
-                trials = 50;
+                trials = 40;
 //                cvold = app.camera.projectionMatrix;
             } else {
                 window.POS.smooth();
@@ -371,19 +371,36 @@ function initPOS() {
 
 }
 
-var o1,o2, o3, o4;
+var o1, o2, o3, o4;
 
 window.POS.smooth = function(o) {
-            if(!o && o1) o = o1;
-
-            if(o1 && o2 && o3 && o4) {
-                for(var i=0;i<3;i++) {
-                    o.t[i] = (o.t[i] + o1.t[i] + o2.t[i] + o3.t[i] + o4.t[i]) / 5;
-                    for(var j=0;j<3;j++) {
-                        o.r[i][j] = (o.r[i][j] + o1.r[i][j] + o2.r[i][j] + o3.r[i][j] + o4.r[i][j]) / 5;
+            if(!o) {
+                // Prediction
+                if(o1) {
+                    if(o2) {
+                        o = {t:[],r:[[],[],[]]}
+                        for(var i=0;i<3;i++) {
+                            o.t[i] = 2*o1.t[i] - o2.t[i];
+                            for(var j=0;j<3;j++) {
+                                o.r[i][j] = 2*o1.r[i][j]-o2.r[i][j];
+                            }
+                        }                        
+                    } else {
+                        o = o1;
+                    }
+                }
+            } else {
+                // Smoothing
+                if(o1 && o2 && o3 && o4) {
+                    for(var i=0;i<3;i++) {
+                        o.t[i] = (o.t[i] + o1.t[i] + o2.t[i] + o3.t[i] + o4.t[i]) / 5;
+                        for(var j=0;j<3;j++) {
+                            o.r[i][j] = (o.r[i][j] + o1.r[i][j] + o2.r[i][j] + o3.r[i][j] + o4.r[i][j]) / 5;
+                        }
                     }
                 }
             }
+
             if(o3) {
                 o4 = o3;
             }
@@ -393,7 +410,10 @@ window.POS.smooth = function(o) {
             if(o1) {
                 o2 = o1;
             }
-            o1 = o;
+            if(o) {
+                o1 = o;
+            }
+            return o;
 }
 
 
