@@ -382,13 +382,35 @@ window.POS.smooth = function(o) {
                         if(o3) {
 //                            console.log('prediction 3');
                             for(var i=0;i<3;i++) {
-                                o.t[i] = o1.t[i] + o2.t[i] - o3.t[i];
+                                var a2 = (o2.t[i]-o3.t[i]);
+                                var a1 = (o1.t[i]-o2.t[i]);
+                                if(a2 > 0.1) {
+                                    a1 = a1*a1/a2;
+                                }
+                                o.t[i] = o1.t[i] + a1;
+
                                 for(var j=0;j<3;j++) {
-                                    o.r[i][j] = o1.r[i][j]+ o2.r[i][j]-o3.r[i][j];
+                                    var a2 = (o2.r[i][j]-o3.r[i][j]);
+                                    var a1 = (o1.r[i][j]-o2.r[i][j]);
+                                    if(a2 > 0.1) {
+                                        a1 = a1*a1/a2;
+                                    }
+                                    o.r[i][j] = o1.r[i][j]+a1;
+                                    //o.r[i][j] = o1.r[i][j]+ o2.r[i][j]-o3.r[i][j];
                                 }
                             }
 
-// 1,2,3,4,5
+// 4+3-2 = 5
+
+// 1,3,4 = 4.5
+
+// 4 + (4-3)=1 + (3-1)=2 = 7
+
+// 4 + (4-3)*(4-3)/(3-1) = 4.5
+
+// 1,3,6 = 6 + 3*3/2 = 10.5
+
+
 // 8-3 = 4
 // 4+(3-2)
 // 12-6-2                        
@@ -411,11 +433,14 @@ window.POS.smooth = function(o) {
             } else {
                 // Smoothing
 //                console.log('smoothing');
-                if(o1 && o2 && o3 && o4) {
+//                if(o1 && o2 && o3 && o4) {
+                if(o1 && o2 && o3) {
                     for(var i=0;i<3;i++) {
-                        o.t[i] = (o.t[i] + o1.t[i] + o2.t[i] + o3.t[i] + o4.t[i]) / 5;
+//                        o.t[i] = (o.t[i] + o1.t[i] + o2.t[i] + o3.t[i] + o4.t[i]) / 5;
+                        o.t[i] = (o.t[i] + o1.t[i] + o2.t[i] + o3.t[i]) / 4;
                         for(var j=0;j<3;j++) {
-                            o.r[i][j] = (o.r[i][j] + o1.r[i][j] + o2.r[i][j] + o3.r[i][j] + o4.r[i][j]) / 5;
+//                            o.r[i][j] = (o.r[i][j] + o1.r[i][j] + o2.r[i][j] + o3.r[i][j] + o4.r[i][j]) / 5;
+                            o.r[i][j] = (o.r[i][j] + o1.r[i][j] + o2.r[i][j] + o3.r[i][j]) / 4;
                         }
                     }
                 }
