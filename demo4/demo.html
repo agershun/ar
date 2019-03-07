@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+<!-- 	<script src="cv.js"></script>
+	<script src="aruco.js"></script>
+  	<script src="svd.js"></script> 
+	<script src="posit1.js"></script>
+	<script src="kalman.js"></script>
+	<script src="sylvester.src.js"></script>
+ -->	<script src="three.min.js"></script>
+</head>
+<body>
+<script>
+
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 40, 640 / 480, 0.1, 1000);
+
+var renderer = new THREE.WebGLRenderer({alpha:true});
+renderer.setSize( 640, 480);
+renderer.domElement.style.position = "absolute";
+renderer.domElement.style.left = "0px";
+renderer.domElement.style.top = "0px";
+document.body.appendChild( renderer.domElement );
+
+var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+var material	= new THREE.MeshNormalMaterial({
+	transparent : true,
+	opacity: 0.7,
+	side: THREE.DoubleSide
+}); //var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+var cube = new THREE.Mesh( geometry, material );
+cube.position.x = 0;
+cube.position.y = 0;
+cube.position.z = 0;
+
+scene.add( cube );
+
+
+var obj = new THREE.Object3D();
+obj.matrixAutoUpdate = false;
+
+obj.position.x = 0;
+obj.position.y = 0;
+obj.position.z = -5;
+
+scene.add( obj );
+
+camera.matrixAutoUpdate = false;
+
+
+
+// var geometry2 = new THREE.BoxGeometry( 1, 1, 1 );
+// var material2 = new THREE.MeshBasicMaterial( { color: 0x0000ff } );
+// var cube2 = new THREE.Mesh( geometry2, material2 );
+// scene.add( cube2 ); 
+
+function animate (){
+	//requestAnimationFrame(animate);
+		obj.rotation.z -= 0.1;
+		obj.updateMatrix();
+		// console.log(Object3D.matrix);
+
+		//obj.updateMatrix();
+//		camera.position.z += 0.01;
+		var mat = new THREE.Matrix4().getInverse(obj.matrix)
+		camera.matrixWorld.copy(mat);
+//		console.log(mat.elements);
+//		 debugger;
+//		camera.matrix.copy();
+//		camera.updateMatrix();
+// console.log(obj.matrix.elements);
+// console.log(camera.matrix.elements);
+		renderer.render( scene, camera );
+}
+
+animate();
+
+
+</script>
+</body>

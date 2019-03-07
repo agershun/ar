@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script src="cv.js"></script>
+	<script src="aruco.js"></script>
+  	<script src="svd.js"></script> 
+	<script src="posit1.js"></script>
+	<script src="kalman.js"></script>
+	<script src="sylvester.src.js"></script>
+	<script src="three.min.js"></script>
+</head>
+<body>
+	<video id="video" autoplay="true" width="640" height="480" style="width:640px;height:480px;position:absolute;top:0px;left:0px"></video> 
+	<canvas id="canvas" width="640" height="480" style="width:640px;height:480px;position:absolute;top:0px;left:0px"></canvas>
+<script>
+
+var modelSize = 1; // mm
+
+var video = document.querySelector("#video");
+var canvas = document.querySelector("#canvas");
+var ctx = canvas.getContext("2d");
+
+var scene = new THREE.Scene();
+// var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+var camera = new THREE.PerspectiveCamera( 40, canvas.width / canvas.height, 0.1, 1000);
+
+      // camera.projectionMatrix.makePerspective(
+      //   0, 640, 0, 480, camera.near, camera.far);
+
+      // Recalculate the fov as threejs is not doing it.
+      // camera.fov = THREE.Math.radToDeg(
+      //   Math.atan((top * camera.zoom) / camera.near)) * 2.0;
+
+
+
+var renderer = new THREE.WebGLRenderer({alpha:true});
+renderer.setSize( 640, 480);
+renderer.domElement.style.position = "absolute";
+renderer.domElement.style.left = "0px";
+renderer.domElement.style.top = "0px";
+//renderer.domElement.style.opacity = "0.5";
+document.body.appendChild( renderer.domElement );
+
+var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+var material	= new THREE.MeshNormalMaterial({
+	transparent : true,
+	opacity: 0.5,
+	side: THREE.DoubleSide
+}); //var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+var cube = new THREE.Mesh( geometry, material );
+cube.position.x = 0;
+cube.position.y = 0;
+cube.position.z = 0.5;
+scene.add( cube );
+
+var geometry2 = new THREE.BoxGeometry( 1, 1, 1 );
+var material2 = new THREE.MeshBasicMaterial( { color: 0x0000ff } );
+var cube2 = new THREE.Mesh( geometry2, material2 );
+cube2.position.x = 2;
+cube2.position.y = 2;
+cube2.position.z = 0.5;
+
+scene.add( cube2 );
+
+var obj = new THREE.Object3D();
+obj.matrixAutoUpdate = false;
+
+obj.position.x = 0;
+obj.position.y = 0;
+obj.position.z = -5;
+
+scene.add( obj );
+
+camera.matrixAutoUpdate = false;
+
+
+//camera.position.z = 5;
+
+ 
+var detector = new AR.Detector();
+var posit = new POS.Posit(modelSize, 640);
+
+var step = 0, KM, x_0, z_k, P_0, F_k, Q_k, H_k, R_k, KO;  // Kalman variables
+var r;
+var skip = 0;
+var kal = false;
+
+if (navigator.mediaDevices.getUserMedia) {       
+    navigator.mediaDevices.getUserMedia({video: true})
+  .then(function(stream) {
+    video.srcObject = stream;
+  })
+  .catch(function(err0r) {
+    console.log("Something went wrong!");
+  });
+}
+
+function animate (){
+	requestAnimationFrame(animate);
+//	console.time(1);
+	detect();
+//	console.timeEnd(1);
+}
+
+function createImage(src, dst){
+  var i = src.data.length, j = (i * 4) + 3;
+  
+  while(i --){
+    dst.data[j -= 4] = 255;
+    dst.data[j - 1] = dst.data[j - 2] = dst.data[j - 3] = src.data[i];
+  }
+  
+  return dst;
+};
+
+var debugImage = ctx.createImageData(640,480);
+animate();
+
+function detect() {
+	ctx.drawImage(video,0,0,640,480);
+	var imageData = ctx.getImageData(0, 0, 640, 480);
+
+	var markers = detector.detect(imageData);
+	ctx.putImageData( createImage(detector.thres, debugImage), 0, 0);
+
+	var marks = {};
+
+	// Collect markers
+	if(markers.length > 0) {
+		for(var i=0;i<markers.length;i++) {
+			if(marks[markers[i].id]) {
+
+			} else {
+				marks[markers[i].id] = markers[i];
+			}
+		}
+	}
+
+	if(markers.length > 0) {
+		skip = 0;
+
+		var marker = markers[0];
+
+        corners = marker.corners;
+
+// Draw strokes
+
+		ctx.lineWidth = 3;
+		ctx.strokeStyle = '#FF0000';
+		ctx.beginPath();
+		ctx.moveTo(corners[0].x, corners[0].y);
+		ctx.lineTo(corners[1].x, corners[1].y);
+		ctx.lineTo(corners[2].x, corners[2].y);
+		ctx.lineTo(corners[3].x, corners[3].y);
+		ctx.closePath()
+		ctx.stroke();
+
+
+
+        
+        for (i = 0; i < corners.length; ++ i){
+          corner = corners[i];
+          
+          corner.x = corner.x - (640 / 2);
+          corner.y = (480 / 2) - corner.y;
+        }
+
+        pose = posit.pose(corners);
+
+        var bt = pose.bestTranslation;
+        var br = pose.bestRotation;
+		r = $V([
+				bt[0], bt[1], bt[2], 
+				br[0][0], br[0][1], br[0][2],
+				br[1][0], br[1][1], br[1][2],
+				br[2][0], br[2][1], br[2][2],
+			]); 
+if(kal) {
+		// Kalman
+        if(step == 0) {
+		//P prior knowledge of state
+			x_0 = $V([
+				bt[0], bt[1], bt[2], 
+				br[0][0], br[0][1], br[0][2],
+				br[1][0], br[1][1], br[1][2],
+				br[2][0], br[2][1], br[2][2],
+			]); //vector. Initial accelerometer values
+
+
+			P_0 = $M([
+			              [1,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,1,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,1,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,1,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,1,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,1,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,1,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,1,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,1,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,1,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,1,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,1],
+			            ]); //identity matrix. Initial covariance. Set to 1
+			F_k = $M([
+			              [1,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,1,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,1,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,1,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,1,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,1,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,1,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,1,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,1,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,1,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,1,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,1],
+			            ]); //identity matrix. How change to model is applied. Set to 1
+			Q_k = $M([
+			              [0,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,0],
+			            ]); //empty matrix. Noise in system is zero
+
+			KM = new KalmanModel(x_0,P_0,F_k,Q_k);
+			r = x_0;
+			step = 1;
+
+        } else if(step == 1) {
+
+			z_k = $V([
+				bt[0], bt[1], bt[2], 
+				br[0][0], br[0][1], br[0][2],
+				br[1][0], br[1][1], br[1][2],
+				br[2][0], br[2][1], br[2][2],
+			]); //vector. Initial accelerometer values
+
+			H_k = $M([
+			              [1,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,1,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,1,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,1,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,1,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,1,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,1,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,1,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,1,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,1,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,1,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,1],
+			            ]); //identity matrix. Describes relationship between model and observation
+			R_k = $M([
+			              [2,0,0,0,0,0,0,0,0,0,0,0],
+			              [0,2,0,0,0,0,0,0,0,0,0,0],
+			              [0,0,2,0,0,0,0,0,0,0,0,0],
+			              [0,0,0,2,0,0,0,0,0,0,0,0],
+			              [0,0,0,0,2,0,0,0,0,0,0,0],
+			              [0,0,0,0,0,2,0,0,0,0,0,0],
+			              [0,0,0,0,0,0,2,0,0,0,0,0],
+			              [0,0,0,0,0,0,0,2,0,0,0,0],
+			              [0,0,0,0,0,0,0,0,2,0,0,0],
+			              [0,0,0,0,0,0,0,0,0,2,0,0],
+			              [0,0,0,0,0,0,0,0,0,0,2,0],
+			              [0,0,0,0,0,0,0,0,0,0,0,2],
+			            ]); //2x Scalar matrix. Describes noise from sensor. Set to 2 to begin
+			
+			KO = new KalmanObservation(z_k,H_k,R_k);
+			r = z_k;
+			step = 2;
+        } else if(step==2) {
+    		KO.z_k = $V([
+				bt[0], bt[1], bt[2], 
+				br[0][0], br[0][1], br[0][2],
+				br[1][0], br[1][1], br[1][2],
+				br[2][0], br[2][1], br[2][2],
+			]); //vector. Initial accelerometer values
+		    KM.update(KO);
+            r = KM.x_k;
+		    step = 2;
+        }
+}
+    } else {
+    	skip++;
+    	if(skip > 60) {
+    		skip = 0;
+    		step = 0;
+    		r = undefined;
+    	} else {
+
+if(kal) {
+			if(step==2) {
+	    		KO.z_k = r;
+			    KM.update(KO);
+			    r = KM.x_k;
+			    step = 2;
+	        }     		
+}
+    	}
+    }
+
+    if(r) {
+//		console.log(r.elements[0]);
+    } else {
+//    	console.log(r);
+    }
+
+
+	if(r) {	
+
+// if(false) {		
+		obj.position.x =  r.elements[0];
+	    obj.position.y =  r.elements[1];
+	    obj.position.z = -r.elements[2];
+
+//console.log(r.elements[1]);
+	    
+	    obj.rotation.x = -Math.asin(-r.elements[8]);
+	    obj.rotation.y = -Math.atan2(r.elements[5], r.elements[11]);
+	    obj.rotation.z = Math.atan2(r.elements[6], r.elements[7]);
+
+	    obj.scale.x = 1;
+	    obj.scale.y = 1;
+	    obj.scale.z = 1;
+	    obj.updateMatrix();
+
+		var mat = new THREE.Matrix4().getInverse(obj.matrix);
+		camera.matrixWorld.copy(mat);
+
+// console.log(cube.matrix);
+// debugger;
+
+// }
+		// camera.position.x = r.elements[0];
+	 //    camera.position.y = r.elements[1];
+	 //    camera.position.z = -(-r.elements[2]);
+	    
+	 //    camera.rotation.x = (-Math.asin(-r.elements[8]));
+	 //    camera.rotation.y = (-Math.atan2(r.elements[5], r.elements[11]));
+	 //    camera.rotation.z = - Math.atan2(r.elements[6], r.elements[7]);
+
+	 //    camera.updateProjectionMatrix();
+
+//	    console.log(camera.position);
+
+		// camera.position.x = -camera.position.x;
+		// camera.position.y = -camera.position.y;
+		//camera.position.z = -camera.position.z ;
+//		console.log(camera.position.z);
+
+		if(false && pose) {
+
+        	var at = pose.alternativeTranslation;
+        	var ar = pose.alternativeRotation;
+
+			cube2.position.x =  at[0];
+		    cube2.position.y =  at[1];
+		    cube2.position.z = -at[2];
+
+	//console.log(r.elements[1]);
+		    
+		    cube2.rotation.x = -Math.asin(-ar[1][2]);
+		    cube2.rotation.y = -Math.atan2(ar[0][2], ar[2][2]);
+		    cube2.rotation.z =  Math.atan2(ar[1][0], ar[1][1]);
+
+		    cube2.scale.x = 1;
+		    cube2.scale.y = 1;
+		    cube2.scale.z = 1;
+
+
+		}
+
+		renderer.render( scene, camera );
+
+	} else {
+		renderer.setClearColor( 0x303030, 0);
+		renderer.clear();
+	}
+
+
+
+}
+
+
+</script>
+</body>

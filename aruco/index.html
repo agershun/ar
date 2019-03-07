@@ -77,6 +77,12 @@
         snapshot();
 
         var markers = detector.detect(imageData);
+
+        if(markers.length > 0) {
+          console.log(markers);
+          debugger;
+        }
+
         drawCorners(markers);
         updateScenes(markers);
         
