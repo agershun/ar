@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script src="cv.js"></script>
+	<script src="aruco.js"></script>
+  	<script src="svd.js"></script> 
+	<script src="posit1.js"></script>
+    <script src="aruco-adaptive.js"></script>
+	<script src="three.min.js"></script>
+</head>
+<body>
+	<video id="video" autoplay="true" width="640" height="480" style="width:640px;height:480px;position:absolute;top:0px;left:0px"></video> 
+	<canvas id="canvas" width="640" height="480" style="width:640px;height:480px;position:absolute;top:0px;left:0px"></canvas>
+<script>
+
+var modelSize = 1; // mm
+
+var video = document.querySelector("#video");
+var canvas = document.querySelector("#canvas");
+var ctx = canvas.getContext("2d");
+
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 40, canvas.width / canvas.height, 0.1, 1000);
+
+var renderer = new THREE.WebGLRenderer({alpha:true});
+renderer.setSize( 640, 480);
+renderer.domElement.style.position = "absolute";
+renderer.domElement.style.left = "0px";
+renderer.domElement.style.top = "0px";
+
+document.body.appendChild( renderer.domElement );
+
+var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+var material	= new THREE.MeshNormalMaterial({
+	transparent : true,
+	opacity: 0.9,
+	side: THREE.DoubleSide
+}); 
+
+var cube = new THREE.Mesh( geometry, material );
+cube.position.x = 0;
+cube.position.y = 0;
+cube.position.z = 0.5;
+scene.add( cube );
+
+var obj = new THREE.Object3D();
+obj.matrixAutoUpdate = false;
+
+obj.position.x = 0;
+obj.position.y = 0;
+obj.position.z = -5;
+
+scene.add( obj );
+
+camera.matrixAutoUpdate = false;
+
+ 
+var detector = new AR.Detector();
+var posit = new POS.Posit(modelSize, 640);
+
+
+if (navigator.mediaDevices.getUserMedia) {       
+    navigator.mediaDevices.getUserMedia({video: true})
+  .then(function(stream) {
+    video.srcObject = stream;
+  })
+  .catch(function(err0r) {
+    console.log("Something went wrong!");
+  });
+}
+
+animate();
+
+function animate (){
+	requestAnimationFrame(animate);
+	detect();
+}
+
+
+var trials = 0;
+var all = 0, suc = 0;
+
+function detect() {
+    all++;
+	ctx.drawImage(video,0,0,640,480);
+
+	var imageData = ctx.getImageData(0, 0, 640, 480);
+
+	var markers = detector.detectAdaptive(imageData);
+
+	if(markers.length > 0) {
+        suc++;
+        if(all % 50 == 0) console.log(all,suc,suc/all);
+		drawScene(markers);
+        trials = 20;
+	} else {
+        if(trials>0) {
+            trials--;
+        } else {
+			renderer.setClearColor( 0x303030, 0);
+			renderer.clear();
+        }
+	}
+}
+
+
+function drawScene(markers) {
+	if(markers.length==0) return;
+
+	var marker = markers[0];
+    corners = marker.corners;
+
+    // Draw strokes
+	ctx.lineWidth = 5;
+
+	ctx.beginPath();
+	ctx.strokeStyle = '#FF0000';
+    ctx.moveTo(corners[0].x, corners[0].y);
+    ctx.lineTo(corners[1].x, corners[1].y);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.strokeStyle = '#FFFF00';
+    ctx.moveTo(corners[1].x, corners[1].y);
+	ctx.lineTo(corners[2].x, corners[2].y);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.strokeStyle = '#00FF00';
+	ctx.moveTo(corners[2].x, corners[2].y);
+    ctx.lineTo(corners[3].x, corners[3].y);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#0000FF';
+    ctx.moveTo(corners[3].x, corners[3].y);
+    ctx.lineTo(corners[0].x, corners[0].y);
+    ctx.stroke();
+
+
+    for (i = 0; i < corners.length; ++ i){
+      corner = corners[i];
+      
+      corner.x = corner.x - (640 / 2);
+      corner.y = (480 / 2) - corner.y;
+    }
+
+    var pose = posit.smoothPose(corners);
+    var bt = pose.bestTranslation;
+    var br = pose.bestRotation;
+
+    // Calculate virtual object
+	obj.position.x =  bt[0];
+    obj.position.y =  bt[1];
+    obj.position.z = -bt[2];
+    obj.rotation.x = -Math.asin(-br[1][2]);
+    obj.rotation.y = -Math.atan2(br[0][2], br[2][2]);
+    obj.rotation.z = Math.atan2(br[1][0], br[1][1]);
+    console.log(br);
+    obj.scale.x = 1;
+    obj.scale.y = 1;
+    obj.scale.z = 1;
+    obj.updateMatrix();
+
+	var mat = new THREE.Matrix4().getInverse(obj.matrix);
+	camera.matrixWorld.copy(mat);
+
+	renderer.render( scene, camera );
+}
+
+function createImage(src, dst){
+  var i = src.data.length, j = (i * 4) + 3;
+  
+  while(i --){
+    dst.data[j -= 4] = 255;
+    dst.data[j - 1] = dst.data[j - 2] = dst.data[j - 3] = src.data[i];
+  }
+  
+  return dst;
+};
+
+function sharpen(ctx, w, h, mix) {
+    var x, sx, sy, r, g, b, a, dstOff, srcOff, wt, cx, cy, scy, scx,
+        weights = [0, -1, 0, -1, 5, -1, 0, -1, 0],
+        katet = Math.round(Math.sqrt(weights.length)),
+        half = (katet * 0.5) | 0,
+        dstData = ctx.createImageData(w, h),
+        dstBuff = dstData.data,
+        srcBuff = ctx.getImageData(0, 0, w, h).data,
+        y = h;
+
+    while (y--) {
+        x = w;
+        while (x--) {
+            sy = y;
+            sx = x;
+            dstOff = (y * w + x) * 4;
+            r = 0;
+            g = 0;
+            b = 0;
+            a = 0;
+
+            for (cy = 0; cy < katet; cy++) {
+                for (cx = 0; cx < katet; cx++) {
+                    scy = sy + cy - half;
+                    scx = sx + cx - half;
+
+                    if (scy >= 0 && scy < h && scx >= 0 && scx < w) {
+                        srcOff = (scy * w + scx) * 4;
+                        wt = weights[cy * katet + cx];
+
+                        r += srcBuff[srcOff] * wt;
+                        g += srcBuff[srcOff + 1] * wt;
+                        b += srcBuff[srcOff + 2] * wt;
+                        a += srcBuff[srcOff + 3] * wt;
+                    }
+                }
+            }
+
+            dstBuff[dstOff] = r * mix + srcBuff[dstOff] * (1 - mix);
+            dstBuff[dstOff + 1] = g * mix + srcBuff[dstOff + 1] * (1 - mix);
+            dstBuff[dstOff + 2] = b * mix + srcBuff[dstOff + 2] * (1 - mix);
+            dstBuff[dstOff + 3] = srcBuff[dstOff + 3];
+        }
+    }
+
+    ctx.putImageData(dstData, 0, 0);
+}
+
+</script>
+</body>
