@@ -37,7 +37,7 @@ function initArucoAdaptive(app) {
 //	container.insertBefore( video, container.firstChild );
 
 	if (navigator.mediaDevices.getUserMedia) {       
-		navigator.mediaDevices.getUserMedia({video: true, facingMode: "environment" })
+		navigator.mediaDevices.getUserMedia({video: {facingMode: "environment" }})
 		.then(function(stream) {
 			video.srcObject = stream;
 			video.oncanplay = function() {
@@ -69,7 +69,7 @@ function initArucoAdaptive(app) {
 				// console.log(71,scale,w/vw,h/vh, w,h,vw,vh);
 				// console.log(scaledWidth,scaledHeight,marginLeft,marginTop);
 
-				console.log(scale, marginLeft, marginTop);
+//				console.log(scale, marginLeft, marginTop);
 
 				modelSize = modelSize;
 
