@@ -12,7 +12,9 @@ function initArucoAdaptive(app) {
 
 	var w = v3dCanvas.width;
 	var h = v3dCanvas.height;
+	var vw, vh;
 
+if(debug) {
 	var canvas = document.createElement("canvas");
 	canvas.width = w;
 	canvas.height = h;
@@ -23,8 +25,7 @@ function initArucoAdaptive(app) {
 	canvas.style.left = "0px";
 	container.insertBefore( canvas, container.firstChild );
 	var ctx = canvas.getContext("2d");
-
-	var vw, vh;
+}
 
 	var video = document.createElement("video");
 	video.autoplay = "true";
@@ -35,6 +36,8 @@ function initArucoAdaptive(app) {
 //	video.style.height = "375px";
 
 //	container.insertBefore( video, container.firstChild );
+
+	window.addEventListener('resize',Resize);
 
 	if (navigator.mediaDevices.getUserMedia) {       
 		navigator.mediaDevices.getUserMedia({audio:false, video: {facingMode: "environment" }})
@@ -60,12 +63,20 @@ function initArucoAdaptive(app) {
 	}
 
 function Resize() {
-					vw = video.videoWidth;
-				vh = video.videoHeight;
+	console.log('resize');
+				w = v3dCanvas.width;
+				h = v3dCanvas.height;
+				canvas.width = w;
+				canvas.height = h;
+				canvas.style.width = w+"px";
+				canvas.style.height = h+"px";
 
+				vw = video.videoWidth;
+				vh = video.videoHeight;
+console.log(w,h,vw,vh);
 				canvas2 = document.createElement("canvas");
-				canvas2.width = w;
-				canvas2.height = h;
+				canvas2.width = vw;
+				canvas2.height = vh;
 				ctx2 = canvas2.getContext("2d");
 
 				// Prepare obj and camera
@@ -106,8 +117,11 @@ function follow() {
     var trials = 0;
 	var originalUpdate = app.controls.update;
 
+	var last = 0;
+
 	app.controls.update = function(delta) {
-		var res = process();
+		var res;
+		res = process();
 		if(res) {
 			var mat = new THREE.Matrix4().getInverse(obj.matrix);
 			this.object.position.set(0,0,0);
@@ -122,7 +136,9 @@ function follow() {
 
 	function process() {
 	// Change render function to insert detect
-		ctx.drawImage(video,marginLeft,marginTop, scaledWidth,scaledHeight);
+		if(debug) {
+			ctx.drawImage(video,marginLeft,marginTop, scaledWidth,scaledHeight);
+		}
 
 		ctx2.drawImage(video,0,0, vw,vh);
 		var imageData = ctx2.getImageData(0, 0, vw, vh);
@@ -131,15 +147,15 @@ function follow() {
 		if(markers.length > 0) {
 			drawScene(markers);
 	        trials = 20;
-	        return true;
+	        return 1;
 		} else {
 	        if(trials>0) {
 	            trials--;
-	            return true;
+	            return 1;
 	        } else {
 				app.renderer.setClearColor( 0x303030, 0);
 				app.renderer.clear();
-				return false;
+				return 0;
 	        }
 		}
 
@@ -155,6 +171,7 @@ function follow() {
 	    	var marker = markers[0];
 	        corners = marker.corners;
 
+	    if(debug) {
 	        // Draw strokes
 	    	ctx.lineWidth = 5;
 
@@ -182,6 +199,7 @@ function follow() {
 	        ctx.lineTo(nx(corners[0].x), ny(corners[0].y));
 	        ctx.stroke();
 	    }
+	}
 
 	    for (i = 0; i < corners.length; ++ i){
 	      corner = corners[i];
