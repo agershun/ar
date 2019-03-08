@@ -41,7 +41,26 @@ function initArucoAdaptive(app) {
 		.then(function(stream) {
 			video.srcObject = stream;
 			video.oncanplay = function() {
-				vw = video.videoWidth;
+
+				Resize();
+
+			}
+		})
+		.catch(function(err0r) {
+			console.log("Something went wrong!");
+		});
+	}
+
+	function nx(x) {
+		return x*scale+marginLeft;
+	}
+
+	function ny(y) {
+		return y*scale+marginTop;
+	}
+
+function Resize() {
+					vw = video.videoWidth;
 				vh = video.videoHeight;
 
 				canvas2 = document.createElement("canvas");
@@ -77,20 +96,8 @@ function initArucoAdaptive(app) {
 				posit = new POS.Posit(modelSize, w);
 
 				follow();				
-			}
-		})
-		.catch(function(err0r) {
-			console.log("Something went wrong!");
-		});
-	}
 
-	function nx(x) {
-		return x*scale+marginLeft;
-	}
-
-	function ny(y) {
-		return y*scale+marginTop;
-	}
+}
 
 
 function follow() {
