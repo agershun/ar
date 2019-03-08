@@ -1,0 +1,65 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <tab name="Init" type="InitTab" active="false" scrollx="0" scrolly="0" scale="0.9"></tab>
+  <tab name="Main" type="MainTab" active="true" scrollx="274.7746719213927" scrolly="349.2014689052298" scale="0.9088252179061368">
+    <block type="whenClicked" id="EHfpT1DN#B,k6!i5n:Q@" x="-230" y="-330">
+      <mutation enableifmissed="false"></mutation>
+      <value name="VALUE">
+        <block type="objectList" id="a)Jqw@Mzi1)Mz=d6^L8L">
+          <field name="FIELDNAME">Cube</field>
+        </block>
+      </value>
+    </block>
+    <block type="whenHovered" id="?jBAQ5cBOTCeLNM_5hMs" x="-230" y="-230">
+      <value name="VALUE">
+        <block type="objectList" id="qJ^me[!e$]Dpa?jBgIFZ">
+          <field name="FIELDNAME">Cube</field>
+        </block>
+      </value>
+      <statement name="DO_OVER">
+        <block type="dragRotate" id="u1Z/@q*/]}:YSSq2L4By">
+          <mutation enablespace="false"></mutation>
+          <field name="AXIS">X</field>
+          <field name="SPACE_TYPE">PARENT</field>
+          <value name="TARGETOBJ">
+            <block type="objectList" id="_E)p`|.*(BR(Ql2s}Bz(">
+              <field name="FIELDNAME">Cube</field>
+            </block>
+          </value>
+        </block>
+      </statement>
+    </block>
+    <block type="setTimeout" id="CAk7/ahQ7jeiV;`MCik^" x="-210" y="-70">
+      <value name="VALUE">
+        <shadow type="math_number" id="Vul:M*F?.nthaMB7S($S">
+          <field name="NUM">1</field>
+        </shadow>
+      </value>
+      <statement name="DO">
+        <block type="applyObjLocalTransform" id="[?m6}-e}g^hXYMT=$6%W">
+          <field name="MODE">position</field>
+          <value name="TARGETOBJ">
+            <block type="objectList" id="l!C,|%^hLC.cnZ0@R^4]">
+              <field name="FIELDNAME">Cube</field>
+            </block>
+          </value>
+          <value name="X">
+            <block type="math_number" id="p}%?_/DMu8`#NGI#c)}*">
+              <field name="NUM">1</field>
+            </block>
+          </value>
+          <value name="Y">
+            <block type="math_number" id="Cyaz_9Oy$^REF9Nl]QI,">
+              <field name="NUM">0</field>
+            </block>
+          </value>
+          <value name="Z">
+            <block type="math_number" id="3LiyJW,rVf1GxIaEo%G#">
+              <field name="NUM">0</field>
+            </block>
+          </value>
+        </block>
+      </statement>
+    </block>
+  </tab>
+  <editorsettings width="700" height="693"></editorsettings>
+</xml>
