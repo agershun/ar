@@ -37,7 +37,7 @@ function initArucoAdaptive(app) {
 //	container.insertBefore( video, container.firstChild );
 
 	if (navigator.mediaDevices.getUserMedia) {       
-		navigator.mediaDevices.getUserMedia({video: true})
+		navigator.mediaDevices.getUserMedia({video: true, facingMode: "environment" })
 		.then(function(stream) {
 			video.srcObject = stream;
 			video.oncanplay = function() {
