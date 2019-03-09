@@ -1,0 +1,13 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <tab name="Init" type="InitTab" active="false" scrollx="289" scrolly="232" scale="0.9"></tab>
+  <tab name="Main" type="MainTab" active="true" scrollx="273.4999999999999" scrolly="232.0000000000001" scale="0.9">
+    <block type="set_score" id="`+D`~J1?Kze0C$zqaMoj" x="-210" y="-170">
+      <value name="VALUE">
+        <block type="math_number" id="t)[6L(qZdHPA%@3u}|E2">
+          <field name="NUM">8</field>
+        </block>
+      </value>
+    </block>
+  </tab>
+  <editorsettings width="700" height="464"></editorsettings>
+</xml>
