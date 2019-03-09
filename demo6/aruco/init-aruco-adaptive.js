@@ -2,7 +2,7 @@
 function initArucoAdaptive(app) {
 	var obj, posit, detector, ctx2;
 	var scale, scaledWidth, scaledHeight, marginLeft, marginTop;
-	var ctx2, canvas2;
+	var canvas, video, ctx, ctx2, canvas2;
 
 	var debug = true; // Draw rectangles
 	var modelSize = 1; // for Poser
@@ -15,7 +15,7 @@ function initArucoAdaptive(app) {
 	var vw, vh;
 
 if(debug) {
-	var canvas = document.createElement("canvas");
+	canvas = document.createElement("canvas");
 	canvas.width = w;
 	canvas.height = h;
 	canvas.style.width = w+"px";
@@ -26,10 +26,10 @@ if(debug) {
 //    canvas.style.display = "none";
 
 	container.insertBefore( canvas, container.firstChild );
-	var ctx = canvas.getContext("2d");
+	ctx = canvas.getContext("2d");
 }
 
-	var video = document.createElement("video");
+	video = document.createElement("video");
 //	video.autoplay = "true";
     video.setAttribute('autoplay', '');
     video.setAttribute('muted', '');
@@ -45,6 +45,15 @@ if(debug) {
 	// video.style.left = "0px";
 
 //	container.insertBefore( video, container.firstChild );
+
+	div = document.createElement("div");
+	div.style.position = "absolute";
+	div.style.width = "100px";
+	div.style.height = "100px";
+	div.style.backgroundColor = "white";
+	container.appendChild(div);
+	div.innerHTML = "Отладка";
+
 
 	window.addEventListener('resize',resize);
 
@@ -128,6 +137,7 @@ function resize() {
 				detector = new AR.Detector();
 				posit = new POS.Posit(modelSize, w);
 
+				div.innerHTML = "vw:"+vw;
 
 }
 
