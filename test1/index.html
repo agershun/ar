@@ -34,7 +34,7 @@ var container = document.getElementById("container");
     video.setAttribute('autoplay', '');
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
-	container.insertBefore( video, container.firstChild );
+//	container.insertBefore( video, container.firstChild );
 
 	canvas2 = document.createElement("canvas");
 	canvas2.style.position = "absolute";
@@ -53,9 +53,11 @@ var container = document.getElementById("container");
 	div.style.position = "absolute";
 	div.style.width = "100px";
 	div.style.height = "100px";
+	div.style.top = '0px';
+	div.style.left = '0px';
 	div.style.backgroundColor = "white";
 	container.appendChild(div);
-	div.innerHTML = "Отладка";
+	div.innerHTML = new Date().getHours() + ":"+new Date().getMinutes();
 
 
 //	window.addEventListener('resize',resize);
