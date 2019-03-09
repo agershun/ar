@@ -320,7 +320,7 @@ function registerOnClick(objNames, cbDo, cbIfMissedDo) {
 
 
 registerOnClick("Cube", function() {
-  console.log("score="+8);}, function() {});
+  window.alert("score="+8);}, function() {});
 
 } // end of PL.init function
 
