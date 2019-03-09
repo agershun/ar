@@ -53,13 +53,13 @@ if(debug) {
 
 //	container.insertBefore( video, container.firstChild );
 
-	div = document.createElement("div");
-	div.style.position = "absolute";
-	div.style.width = "100px";
-	div.style.height = "100px";
-	div.style.backgroundColor = "white";
-	container.appendChild(div);
-	div.innerHTML = "Отладка";
+	// div = document.createElement("div");
+	// div.style.position = "absolute";
+	// div.style.width = "100px";
+	// div.style.height = "100px";
+	// div.style.backgroundColor = "white";
+	// container.appendChild(div);
+	// div.innerHTML = "Отладка";
 
 
 	window.addEventListener('resize',resize);
@@ -144,7 +144,7 @@ function resize() {
 				detector = new AR.Detector();
 				posit = new POS.Posit(modelSize, w);
 	
-				div.innerHTML = 2;
+//				div.innerHTML = 2;
 
 }
 
@@ -175,13 +175,13 @@ function follow() {
 //		if(debug) {
 		ctx.drawImage(video,marginLeft,marginTop, scaledWidth,scaledHeight);
 
-	    	ctx.lineWidth = 8;
+	    	// ctx.lineWidth = 8;
 
-	    	ctx.beginPath();
-	    	ctx.strokeStyle = '#FF0000';
-	        ctx.moveTo(100,100);
-	        ctx.lineTo(300, 300);
-	        ctx.stroke();
+	    	// ctx.beginPath();
+	    	// ctx.strokeStyle = '#FF0000';
+	     //    ctx.moveTo(100,100);
+	     //    ctx.lineTo(300, 300);
+	     //    ctx.stroke();
 
 //		}
 
