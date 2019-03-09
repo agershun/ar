@@ -23,7 +23,7 @@ if(debug) {
 	canvas.style.position = "absolute";
 	canvas.style.top = "0px";
 	canvas.style.left = "0px";
-    canvas.style.display = "none";
+//    canvas.style.display = "none";
 
 	container.insertBefore( canvas, container.firstChild );
 	var ctx = canvas.getContext("2d");
@@ -34,7 +34,7 @@ if(debug) {
     video.setAttribute('autoplay', '');
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
-	container.insertBefore( video, container.firstChild );
+//	container.insertBefore( video, container.firstChild );
 
 	canvas2 = document.createElement("canvas");
 	ctx2 = canvas2.getContext("2d");
@@ -49,7 +49,10 @@ if(debug) {
 	window.addEventListener('resize',resize);
 
 	if (navigator.mediaDevices.getUserMedia) {       
-		navigator.mediaDevices.getUserMedia({audio:false, video: {facingMode: "environment" }})
+		navigator.mediaDevices.getUserMedia({audio:false, video: 
+//			{facingMode: "environment" }
+			{facingMode: "user" }
+		})
 		.then(function(stream) {
 			video.srcObject = stream;
 			video.oncanplay = function() {
