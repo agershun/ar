@@ -14,6 +14,12 @@ function initArucoAdaptive(app) {
 	var h = v3dCanvas.height;
 	var vw, vh;
 
+
+	v3dCanvas.style.position = "absolute";
+	v3dCanvas.style.top = "0px";
+	v3dCanvas.style.left = "0px";
+
+
 if(debug) {
 	canvas = document.createElement("canvas");
 	canvas.width = w;
@@ -25,8 +31,8 @@ if(debug) {
 	canvas.style.left = "0px";
 //    canvas.style.display = "none";
 
-//	container.insertBefore( canvas, container.firstChild );
-	container.appendChild( canvas );
+	container.insertBefore( canvas, container.firstChild );
+//	container.appendChild( canvas );
 	ctx = canvas.getContext("2d");
 }
 
@@ -35,7 +41,7 @@ if(debug) {
     video.setAttribute('autoplay', '');
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
-//	container.insertBefore( video, container.firstChild );
+	container.insertBefore( video, container.firstChild );
 
 	canvas2 = document.createElement("canvas");
 	ctx2 = canvas2.getContext("2d");
