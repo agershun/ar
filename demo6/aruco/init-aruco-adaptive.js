@@ -28,7 +28,10 @@ if(debug) {
 }
 
 	var video = document.createElement("video");
-	video.autoplay = "true";
+//	video.autoplay = "true";
+    video.setAttribute('autoplay', '');
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
 	// video.style.position = "absolute";
 	// video.style.top = "0px";
 	// video.style.left = "0px";
@@ -63,7 +66,7 @@ if(debug) {
 	}
 
 function Resize() {
-	console.log('resize');
+//	console.log('resize');
 				w = v3dCanvas.width;
 				h = v3dCanvas.height;
 				canvas.width = w;
@@ -73,7 +76,7 @@ function Resize() {
 
 				vw = video.videoWidth;
 				vh = video.videoHeight;
-console.log(w,h,vw,vh);
+//console.log(w,h,vw,vh);
 				canvas2 = document.createElement("canvas");
 				canvas2.width = vw;
 				canvas2.height = vh;
