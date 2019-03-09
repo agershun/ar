@@ -168,6 +168,15 @@ function follow() {
 	// Change render function to insert detect
 //		if(debug) {
 		ctx.drawImage(video,marginLeft,marginTop, scaledWidth,scaledHeight);
+
+	    	ctx.lineWidth = 8;
+
+	    	ctx.beginPath();
+	    	ctx.strokeStyle = '#FF0000';
+	        ctx.moveTo(100,100);
+	        ctx.lineTo(300, 300);
+	        ctx.stroke();
+
 //		}
 
 		ctx2.drawImage(video,0,0, vw,vh);
