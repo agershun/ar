@@ -25,7 +25,8 @@ if(debug) {
 	canvas.style.left = "0px";
 //    canvas.style.display = "none";
 
-	container.insertBefore( canvas, container.firstChild );
+//	container.insertBefore( canvas, container.firstChild );
+	container.appendChild( canvas );
 	ctx = canvas.getContext("2d");
 }
 
