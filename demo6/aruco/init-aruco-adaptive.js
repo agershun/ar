@@ -23,6 +23,8 @@ if(debug) {
 	canvas.style.position = "absolute";
 	canvas.style.top = "0px";
 	canvas.style.left = "0px";
+    canvas.style.display = "none";
+
 	container.insertBefore( canvas, container.firstChild );
 	var ctx = canvas.getContext("2d");
 }
@@ -32,7 +34,6 @@ if(debug) {
     video.setAttribute('autoplay', '');
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
-    video.style.display = "none";
 	container.insertBefore( video, container.firstChild );
 
 	canvas2 = document.createElement("canvas");
