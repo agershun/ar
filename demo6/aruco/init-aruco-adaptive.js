@@ -136,7 +136,8 @@ function resize() {
 
 				detector = new AR.Detector();
 				posit = new POS.Posit(modelSize, w);
-
+	
+				div.innerHTML = w+", "+vw+", "+scaledWidth;
 
 }
 
@@ -166,7 +167,6 @@ function follow() {
 	// Change render function to insert detect
 //		if(debug) {
 		ctx.drawImage(video,marginLeft,marginTop, scaledWidth,scaledHeight);
-		div.innerHTML = "165"+vw;
 //		}
 
 		ctx2.drawImage(video,0,0, vw,vh);
