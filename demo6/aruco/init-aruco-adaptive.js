@@ -138,7 +138,7 @@ function resize() {
 				detector = new AR.Detector();
 				posit = new POS.Posit(modelSize, w);
 	
-				div.innerHTML = w+", "+vw+", "+scaledWidth;
+				div.innerHTML = 2;
 
 }
 
