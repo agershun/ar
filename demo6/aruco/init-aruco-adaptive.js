@@ -50,12 +50,12 @@ if(debug) {
 
 	if (navigator.mediaDevices.getUserMedia) {       
 		navigator.mediaDevices.getUserMedia({audio:false, video: 
-//			{facingMode: "environment" }
-			{facingMode: "user" }
+			{facingMode: "environment" }
+//			{facingMode: "user" }
 		})
 		.then(function(stream) {
 			video.srcObject = stream;
-			video.oncanplay = function() {
+			video.oncanplaythrough = function() {
 				// document.body.addEventListener('click', function(){
 				// 	video.play();
 				// })
