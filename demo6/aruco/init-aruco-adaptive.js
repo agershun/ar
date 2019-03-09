@@ -32,9 +32,12 @@ if(debug) {
     video.setAttribute('autoplay', '');
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
+    video.style.display = "none";
+	container.insertBefore( video, container.firstChild );
 
 	canvas2 = document.createElement("canvas");
 	ctx2 = canvas2.getContext("2d");
+//	container.insertBefore( canvas2, container.firstChild );
 
 	// video.style.position = "absolute";
 	// video.style.top = "0px";
@@ -49,9 +52,9 @@ if(debug) {
 		.then(function(stream) {
 			video.srcObject = stream;
 			video.oncanplay = function() {
-				document.body.addEventListener('click', function(){
-					video.play();
-				})
+				// document.body.addEventListener('click', function(){
+				// 	video.play();
+				// })
 
 				resize();
 				follow();				
@@ -82,8 +85,6 @@ function resize() {
 
 				vw = video.videoWidth;
 				vh = video.videoHeight;
-				video.style.width = vw+"px"; // ?
-				video.style.height = vh+"px"; // ?
 
 //console.log(w,h,vw,vh);
 				canvas2.width = vw;
@@ -105,6 +106,13 @@ function resize() {
 				scaledWidth = vw * scale; 
 				marginLeft = (w-scaledWidth)/2;
 				marginTop = (h-scaledHeight)/2;
+
+
+				video.style.width = scaledWidth+"px"; // ?
+				video.style.height = scaledHeight+"px"; // ?
+				video.style.marginLeft = marginLeft+"px"; // ?
+				video.style.marginTop = marginTop+"px"; // ?
+
 
 				// console.log(71,scale,w/vw,h/vh, w,h,vw,vh);
 				// console.log(scaledWidth,scaledHeight,marginLeft,marginTop);
@@ -148,6 +156,9 @@ function follow() {
 		}
 
 		ctx2.drawImage(video,0,0, vw,vh);
+
+//		ctx2.drawImage(video,-marginLeft,-marginTop, scaledWidth,scaledHeight);
+
 		var imageData = ctx2.getImageData(0, 0, vw, vh);
 		var markers = detector.detectAdaptive(imageData);
 
