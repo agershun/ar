@@ -1,0 +1,24 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <tab name="Init" type="InitTab" active="false" scrollx="289" scrolly="232" scale="0.9"></tab>
+  <tab name="Main" type="MainTab" active="false" scrollx="273.4999999999994" scrolly="232.00000000000034" scale="0.9">
+    <block type="whenClicked" id="WZi!L2B{8$Ipw!:/{-9f" x="-230" y="-190">
+      <mutation enableifmissed="false"></mutation>
+      <value name="VALUE">
+        <block type="objectList" id=":`$_^hzKZdzXZKohi2D#">
+          <field name="FIELDNAME">Cube</field>
+        </block>
+      </value>
+      <statement name="DO">
+        <block type="set_score" id="`+D`~J1?Kze0C$zqaMoj">
+          <value name="VALUE">
+            <block type="math_number" id="t)[6L(qZdHPA%@3u}|E2">
+              <field name="NUM">8</field>
+            </block>
+          </value>
+        </block>
+      </statement>
+    </block>
+  </tab>
+  <tab name="Second" type="SecondaryTab" active="true" scrollx="2.2737367544323206e-13" scrolly="0" scale="0.9"></tab>
+  <editorsettings width="700" height="464"></editorsettings>
+</xml>

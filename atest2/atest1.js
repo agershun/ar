@@ -4,9 +4,6 @@
 
 window.addEventListener('load', function() {
 
-
-
-
 (function() {
 
     var params = v3d.AppUtils.getPageParams();
@@ -195,6 +192,19 @@ function runCode(app) {
 }
 
 function initCustomPuzzles() {
+
+    // Add to the editor
+  var oldGetToolbox = v3d.PE.getToolbox;
+
+  v3d.PE.getToolbox = function() {
+    var ret = oldGetToolbox.apply(this,arguments);
+    ret += `  
+    <category name="SCORM1" colour="210">
+        <block type="set_score"></block>
+    </category>
+`;
+    return ret;
+  }
 
 
 

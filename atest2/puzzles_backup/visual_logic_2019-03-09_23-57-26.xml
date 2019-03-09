@@ -1,0 +1,5 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <tab name="Init" type="InitTab" active="false" scrollx="289" scrolly="232" scale="0.9"></tab>
+  <tab name="Main" type="MainTab" active="true" scrollx="273.5" scrolly="232.00000000000014" scale="0.9"></tab>
+  <editorsettings width="700" height="464"></editorsettings>
+</xml>
