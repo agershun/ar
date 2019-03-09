@@ -32,23 +32,29 @@ if(debug) {
     video.setAttribute('autoplay', '');
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
+
+	canvas2 = document.createElement("canvas");
+	ctx2 = canvas2.getContext("2d");
+
 	// video.style.position = "absolute";
 	// video.style.top = "0px";
 	// video.style.left = "0px";
-//	video.style.width = "812px";
-//	video.style.height = "375px";
 
 //	container.insertBefore( video, container.firstChild );
 
-	window.addEventListener('resize',Resize);
+	window.addEventListener('resize',resize);
 
 	if (navigator.mediaDevices.getUserMedia) {       
 		navigator.mediaDevices.getUserMedia({audio:false, video: {facingMode: "environment" }})
 		.then(function(stream) {
 			video.srcObject = stream;
 			video.oncanplay = function() {
+				document.body.addEventListener('click', function(){
+					video.play();
+				})
 
-				Resize();
+				resize();
+				follow();				
 
 			}
 		})
@@ -65,7 +71,7 @@ if(debug) {
 		return y*scale+marginTop;
 	}
 
-function Resize() {
+function resize() {
 //	console.log('resize');
 				w = v3dCanvas.width;
 				h = v3dCanvas.height;
@@ -76,11 +82,12 @@ function Resize() {
 
 				vw = video.videoWidth;
 				vh = video.videoHeight;
+				video.style.width = vw+"px"; // ?
+				video.style.height = vh+"px"; // ?
+
 //console.log(w,h,vw,vh);
-				canvas2 = document.createElement("canvas");
 				canvas2.width = vw;
 				canvas2.height = vh;
-				ctx2 = canvas2.getContext("2d");
 
 				// Prepare obj and camera
 				obj = new THREE.Object3D();
@@ -109,7 +116,6 @@ function Resize() {
 				detector = new AR.Detector();
 				posit = new POS.Posit(modelSize, w);
 
-				follow();				
 
 }
 
@@ -119,8 +125,6 @@ function follow() {
 	// Change controls
     var trials = 0;
 	var originalUpdate = app.controls.update;
-
-	var last = 0;
 
 	app.controls.update = function(delta) {
 		var res;
@@ -234,7 +238,6 @@ function follow() {
 	    obj.scale.y = 1;
 	    obj.scale.z = 1;
 	    obj.updateMatrix();
-
 
 	}
 }
