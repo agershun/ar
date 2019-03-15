@@ -18,10 +18,14 @@ AR.Detector.prototype.detectAdaptive = function(image){
     CV.adaptiveThreshold(this.grey, this.thres, this.priority[i][0], this.priority[i][1]);
 
     this.contours = CV.findContours(this.thres, this.binary);
-    this.candidates = this.findCandidates(this.contours, image.width * 0.20, 0.05, 10);
+//    this.candidates = this.findCandidates(this.contours, image.width * 0.20, 0.05, 10);
+    this.candidates = this.findCandidates(this.contours, image.width * 0.05, 0.05, 5);
     this.candidates = this.clockwiseCorners(this.candidates);
-    this.candidates = this.notTooNear(this.candidates, 10);
+//    this.candidates = this.notTooNear(this.candidates, 10);
+    this.candidates = this.notTooNear(this.candidates, 5);
+//    markers = this.findMarkers(this.grey, this.candidates, 49);
     markers = this.findMarkers(this.grey, this.candidates, 49);
+//    markers = this.findMarkers(this.grey, this.candidates, 60);
 
     if(markers.length > 0 ) {
       var bestParams = this.priority.splice(i,1);
